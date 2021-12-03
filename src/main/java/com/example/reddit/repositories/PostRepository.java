@@ -1,0 +1,9 @@
+package com.example.reddit.repositories;
+
+import com.example.reddit.models.Post;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PostRepository extends JpaRepository<Post, Long> {
+
+}
