@@ -1,4 +1,4 @@
-package com.example.reddit.models;
+package com.example.reddit.model;
 
 import java.time.Instant;
 

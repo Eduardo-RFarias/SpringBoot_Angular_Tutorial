@@ -1,42 +1,37 @@
-package com.example.reddit.models;
+package com.example.reddit.model;
 
 import java.time.Instant;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubReddit {
-
+@Entity
+public class Comment {
     @Id
     @GeneratedValue
-    private Long subRedditId;
+    private Long id;
 
-    @NotBlank
-    private String name;
+    @NotEmpty
+    private String text;
 
-    @NotBlank
-    private String description;
-
-    @OneToMany
-    private List<Post> posts;
+    @ManyToOne
+    @JoinColumn(name = "postId", referencedColumnName = "postId")
+    private Post post;
 
     private Instant createdDate;
 
     @ManyToOne
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;
 }

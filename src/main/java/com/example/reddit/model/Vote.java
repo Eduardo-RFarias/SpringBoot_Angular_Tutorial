@@ -1,15 +1,14 @@
-package com.example.reddit.models;
-
-import java.time.Instant;
+package com.example.reddit.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,19 +16,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Comment {
+@Builder
+public class Vote {
     @Id
     @GeneratedValue
-    private Long id;
+    private Long voteId;
 
-    @NotEmpty
-    private String text;
+    private VoteType voteType;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "postId", referencedColumnName = "postId")
     private Post post;
-
-    private Instant createdDate;
 
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId")

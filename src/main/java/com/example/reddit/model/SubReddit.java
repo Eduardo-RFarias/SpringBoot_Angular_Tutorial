@@ -1,13 +1,14 @@
-package com.example.reddit.models;
+package com.example.reddit.model;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.Email;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,23 +20,23 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class SubReddit {
 
     @Id
     @GeneratedValue
-    private Long userId;
+    private Long subRedditId;
 
     @NotBlank
-    private String username;
+    private String name;
 
     @NotBlank
-    private String password;
+    private String description;
 
-    @Email
-    @NotEmpty
-    private String email;
+    @OneToMany
+    private List<Post> posts;
 
-    private Instant created;
+    private Instant createdDate;
 
-    private Boolean enabled;
+    @ManyToOne
+    private User user;
 }

@@ -1,6 +1,6 @@
-package com.example.reddit.repositories;
+package com.example.reddit.repository;
 
-import com.example.reddit.models.SubReddit;
+import com.example.reddit.model.SubReddit;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
