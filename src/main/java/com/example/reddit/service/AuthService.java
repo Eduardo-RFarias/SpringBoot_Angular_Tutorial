@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import com.example.reddit.dto.RegisterRequest;
+import com.example.reddit.exception.SpringRedditException;
 import com.example.reddit.model.NotificationEmail;
 import com.example.reddit.model.User;
 import com.example.reddit.model.VerificationToken;
@@ -50,6 +51,7 @@ public class AuthService {
         mailService.sendMail(notificationEmail);
     }
 
+    @Transactional
     private String generateVerificationToken(User user) {
         String token = UUID.randomUUID().toString();
 
@@ -61,5 +63,23 @@ public class AuthService {
         verificationTokenRepository.save(verificationToken);
 
         return token;
+    }
+
+    public void verifyAccount(String token) {
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new SpringRedditException("Invalid Token"));
+
+        fetchUserAndEnable(verificationToken);
+    }
+
+    @Transactional
+    private void fetchUserAndEnable(VerificationToken verificationToken) {
+        String username = verificationToken.getUser().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new SpringRedditException("User not found with username -" + username));
+
+        user.setEnabled(true);
+
+        userRepository.save(user);
     }
 }
