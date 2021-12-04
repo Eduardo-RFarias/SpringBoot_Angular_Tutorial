@@ -1,5 +1,7 @@
 package com.example.reddit.model;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.time.Instant;
 
 import javax.persistence.Entity;
@@ -27,7 +29,7 @@ public class Post {
     @GeneratedValue
     private Long postId;
 
-    @NotBlank
+    @NotBlank(message = "Post Name cannot be empty or Null")
     private String postName;
 
     @Nullable
@@ -39,13 +41,13 @@ public class Post {
 
     private Integer voteCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;
 
     private Instant createdDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "subRedditId", referencedColumnName = "subRedditId")
     private SubReddit subReddit;
 

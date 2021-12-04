@@ -1,5 +1,7 @@
 package com.example.reddit.model;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.time.Instant;
 
 import javax.persistence.Entity;
@@ -25,7 +27,7 @@ public class VerificationToken {
 
     private String token;
 
-    @OneToOne
+    @OneToOne(fetch = LAZY)
     private User user;
 
     private Instant expiryDate;

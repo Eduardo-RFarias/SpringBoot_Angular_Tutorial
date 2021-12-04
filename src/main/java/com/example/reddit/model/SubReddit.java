@@ -1,5 +1,7 @@
 package com.example.reddit.model;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.time.Instant;
 import java.util.List;
 
@@ -26,17 +28,17 @@ public class SubReddit {
     @GeneratedValue
     private Long subRedditId;
 
-    @NotBlank
+    @NotBlank(message = "Community name is required")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Description is required")
     private String description;
 
-    @OneToMany
+    @OneToMany(fetch = LAZY)
     private List<Post> posts;
 
     private Instant createdDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     private User user;
 }

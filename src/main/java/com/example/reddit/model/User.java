@@ -25,14 +25,14 @@ public class User {
     @GeneratedValue
     private Long userId;
 
-    @NotBlank
+    @NotBlank(message = "Username is required")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "Password is required")
     private String password;
 
     @Email
-    @NotEmpty
+    @NotEmpty(message = "Email is required")
     private String email;
 
     private Instant created;
