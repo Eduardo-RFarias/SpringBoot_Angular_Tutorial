@@ -28,7 +28,7 @@ public class VerificationToken {
     private String token;
 
     @OneToOne(fetch = LAZY)
-    private User user;
+    private RedditUser user;
 
     private Instant expiryDate;
 }

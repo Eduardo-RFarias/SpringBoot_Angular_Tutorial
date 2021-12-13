@@ -43,7 +43,7 @@ public class Post {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private User user;
+    private RedditUser user;
 
     private Instant createdDate;
 

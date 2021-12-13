@@ -33,5 +33,5 @@ public class Vote {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private User user;
+    private RedditUser user;
 }

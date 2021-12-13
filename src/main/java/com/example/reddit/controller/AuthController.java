@@ -1,5 +1,7 @@
 package com.example.reddit.controller;
 
+import com.example.reddit.dto.AuthenticationResponse;
+import com.example.reddit.dto.LoginRequest;
 import com.example.reddit.dto.RegisterRequest;
 import com.example.reddit.service.AuthService;
 
@@ -32,6 +34,13 @@ public class AuthController {
         authService.verifyAccount(token);
 
         return ResponseEntity.ok().body("Account verified Successfully");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
+        AuthenticationResponse response = authService.login(loginRequest);
+
+        return ResponseEntity.ok().body(response);
     }
 
 }
