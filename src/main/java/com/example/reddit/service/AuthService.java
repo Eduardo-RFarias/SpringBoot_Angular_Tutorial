@@ -6,7 +6,8 @@ import java.util.UUID;
 import com.example.reddit.dto.AuthenticationResponse;
 import com.example.reddit.dto.LoginRequest;
 import com.example.reddit.dto.RegisterRequest;
-import com.example.reddit.exception.SpringRedditException;
+import com.example.reddit.exception.InvalidTokenException;
+import com.example.reddit.exception.NotFoundException;
 import com.example.reddit.model.NotificationEmail;
 import com.example.reddit.model.RedditUser;
 import com.example.reddit.model.VerificationToken;
@@ -74,9 +75,10 @@ public class AuthService {
         return token;
     }
 
+    @Transactional
     public void verifyAccount(String token) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token)
-                .orElseThrow(() -> new SpringRedditException("Invalid Token"));
+                .orElseThrow(() -> new InvalidTokenException("Given validation Token is invalid"));
 
         fetchUserAndEnable(verificationToken);
     }
@@ -85,7 +87,7 @@ public class AuthService {
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
         RedditUser user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new SpringRedditException("User not found with username -" + username));
+                .orElseThrow(() -> new NotFoundException("User not found with username -" + username));
 
         user.setEnabled(true);
 

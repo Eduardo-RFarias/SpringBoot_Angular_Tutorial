@@ -1,6 +1,6 @@
 package com.example.reddit.service;
 
-import com.example.reddit.exception.SpringRedditException;
+import com.example.reddit.exception.UnknownException;
 import com.example.reddit.model.NotificationEmail;
 
 import org.springframework.mail.MailException;
@@ -40,7 +40,7 @@ public class MailService {
             mailSender.send(messagePreparator);
             log.info("Email sent");
         } catch (MailException e) {
-            throw new SpringRedditException(
+            throw new UnknownException(
                     "Exception occurred when sending email to: " + notificationEmail.getRecipient());
         }
 

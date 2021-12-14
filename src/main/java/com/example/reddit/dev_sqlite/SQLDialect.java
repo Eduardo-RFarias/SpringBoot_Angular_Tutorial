@@ -1,4 +1,4 @@
-package com.example.reddit.sqlite;
+package com.example.reddit.dev_sqlite;
 
 import java.sql.Types;
 
