@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubRedditDto {
+public class SubRedditRequest {
 	private Long subRedditId;
 	private String name;
 	private String description;
-	private Integer numberOfPosts;
+	private String username;
 }

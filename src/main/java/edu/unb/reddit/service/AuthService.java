@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class AuthService {
 
 	private final PasswordEncoder passwordEncoder;
@@ -34,7 +37,6 @@ public class AuthService {
 	private final AuthenticationManager authenticationManager;
 	private final JwtProvider jwtProvider;
 
-	@Transactional
 	public void signup(RegisterRequest registerRequest) {
 		var user = new RedditUser();
 
@@ -59,7 +61,6 @@ public class AuthService {
 		mailService.sendMail(notificationEmail);
 	}
 
-	@Transactional
 	private String generateVerificationToken(RedditUser user) {
 		var token = UUID.randomUUID().toString();
 
@@ -73,7 +74,6 @@ public class AuthService {
 		return token;
 	}
 
-	@Transactional
 	public void verifyAccount(String token) {
 		var verificationToken = verificationTokenRepository.findByToken(token)
 				.orElseThrow(() -> new InvalidTokenException("Given validation Token is invalid"));
@@ -81,7 +81,6 @@ public class AuthService {
 		fetchUserAndEnable(verificationToken);
 	}
 
-	@Transactional
 	private void fetchUserAndEnable(VerificationToken verificationToken) {
 		var username = verificationToken.getUser().getUsername();
 		var user = userRepository.findByUsername(username)
@@ -92,7 +91,6 @@ public class AuthService {
 		userRepository.save(user);
 	}
 
-	@Transactional
 	public AuthenticationResponse login(LoginRequest loginRequest) {
 		var authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -102,5 +100,11 @@ public class AuthService {
 		var token = jwtProvider.generateToken(authentication);
 
 		return new AuthenticationResponse(token, loginRequest.getUsername());
+	}
+
+	public RedditUser getCurrentUser() {
+		var principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return userRepository.findByUsername(principal.getUsername())
+				.orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getUsername()));
 	}
 }

@@ -8,7 +8,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.unb.reddit.dto.SubRedditDto;
+import edu.unb.reddit.dto.SubRedditRequest;
+import edu.unb.reddit.dto.SubRedditResponse;
 import edu.unb.reddit.exception.NotFoundException;
 import edu.unb.reddit.mapper.SubRedditMapper;
 import edu.unb.reddit.repository.SubRedditRepository;
@@ -16,32 +17,31 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class SubRedditService {
 	private final SubRedditRepository subRedditRepository;
 	private final SubRedditMapper subRedditMapper;
+	private final AuthService authService;
 
-	@Transactional
-	public List<SubRedditDto> list() {
-		return subRedditRepository.findAll().stream().map(subRedditMapper::mapSubRedditToDto).collect(toList());
+	public List<SubRedditResponse> list() {
+		return subRedditRepository.findAll().stream().map(subRedditMapper::entityToResponse).collect(toList());
 	}
 
-	@Transactional
-	public SubRedditDto retrieve(Long id) {
+	public SubRedditResponse retrieve(Long id) {
 		var subReddit = subRedditRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException("Could not find subreddit with Id " + id));
 
-		return subRedditMapper.mapSubRedditToDto(subReddit);
+		return subRedditMapper.entityToResponse(subReddit);
 	}
 
-	@Transactional
-	public SubRedditDto save(SubRedditDto subRedditDto) {
-		var subReddit = subRedditRepository.save(subRedditMapper.mapDtoToSubreddit(subRedditDto));
+	public SubRedditResponse save(SubRedditRequest subRedditDto) {
+		var currentUser = authService.getCurrentUser();
+		var subReddit = subRedditRepository.save(subRedditMapper.requestToEntity(subRedditDto, currentUser));
 
-		return subRedditMapper.mapSubRedditToDto(subReddit);
+		return subRedditMapper.entityToResponse(subReddit);
 	}
 
-	@Transactional
-	public SubRedditDto update(Long id, SubRedditDto subRedditDto) {
+	public SubRedditResponse update(Long id, SubRedditRequest subRedditDto) {
 		var subReddit = subRedditRepository.findById(id).orElseThrow(
 				() -> new NotFoundException("Could not find subreddit with Id " + subRedditDto.getSubRedditId()));
 
@@ -50,10 +50,9 @@ public class SubRedditService {
 
 		var savedSubReddit = subRedditRepository.save(subReddit);
 
-		return subRedditMapper.mapSubRedditToDto(savedSubReddit);
+		return subRedditMapper.entityToResponse(savedSubReddit);
 	}
 
-	@Transactional
 	public void delete(Long id) {
 		try {
 			subRedditRepository.deleteById(id);

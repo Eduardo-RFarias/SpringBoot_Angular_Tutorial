@@ -1,10 +1,8 @@
 package edu.unb.reddit.controller;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -20,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.unb.reddit.assembler.SubRedditAssembler;
-import edu.unb.reddit.dto.SubRedditDto;
+import edu.unb.reddit.dto.SubRedditRequest;
+import edu.unb.reddit.dto.SubRedditResponse;
 import edu.unb.reddit.service.SubRedditService;
 import lombok.AllArgsConstructor;
 
@@ -32,29 +31,23 @@ public class SubRedditController {
 	private final SubRedditAssembler subRedditAssembler;
 
 	@GetMapping("/")
-	public CollectionModel<EntityModel<SubRedditDto>> list() {
-		var subReddits = subRedditService.list();
-
-		List<EntityModel<SubRedditDto>> subRedditsWithLinks = new LinkedList<>();
-
-		for (var subReddit : subReddits) {
-			subRedditsWithLinks.add(subRedditAssembler.toModel(subReddit));
-		}
+	public CollectionModel<EntityModel<SubRedditResponse>> list() {
+		var subReddits = subRedditService.list().stream().map(subRedditAssembler::toModel).collect(toList());
 
 		var selfLink = linkTo(methodOn(getClass()).list()).withSelfRel();
 
-		return CollectionModel.of(subRedditsWithLinks, selfLink);
+		return CollectionModel.of(subReddits, selfLink);
 	}
 
-	@GetMapping("/{id}")
-	public EntityModel<SubRedditDto> retrieve(@PathVariable Long id) {
+	@GetMapping("/{id}/")
+	public EntityModel<SubRedditResponse> retrieve(@PathVariable Long id) {
 		var subReddit = subRedditService.retrieve(id);
 
 		return subRedditAssembler.toModel(subReddit);
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<EntityModel<SubRedditDto>> create(@RequestBody SubRedditDto subRedditDto) {
+	public ResponseEntity<EntityModel<SubRedditResponse>> create(@RequestBody SubRedditRequest subRedditDto) {
 		var savedSubReddit = subRedditService.save(subRedditDto);
 		var entity = subRedditAssembler.toModel(savedSubReddit);
 
@@ -63,14 +56,14 @@ public class SubRedditController {
 		return ResponseEntity.created(location).body(entity);
 	}
 
-	@PutMapping("/{id}")
-	public EntityModel<SubRedditDto> update(@PathVariable Long id, @RequestBody SubRedditDto subRedditDto) {
+	@PutMapping("/{id}/")
+	public EntityModel<SubRedditResponse> update(@PathVariable Long id, @RequestBody SubRedditRequest subRedditDto) {
 		var subReddit = subRedditService.update(id, subRedditDto);
 
 		return subRedditAssembler.toModel(subReddit);
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/{id}/")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		subRedditService.delete(id);
 

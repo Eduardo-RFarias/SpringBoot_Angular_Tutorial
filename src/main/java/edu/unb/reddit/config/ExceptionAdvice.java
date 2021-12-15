@@ -13,19 +13,19 @@ import edu.unb.reddit.exception.UnknownException;
 public class ExceptionAdvice {
 
 	@ExceptionHandler(NotFoundException.class)
-	public ResponseEntity<?> handleNotFound(NotFoundException ex) {
-		return ResponseEntity.notFound().build();
+	public ResponseEntity<String> handleNotFound(NotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
 
 	@ExceptionHandler(InvalidTokenException.class)
-	public ResponseEntity<?> handleInvalidToken(NotFoundException ex) {
-		return ResponseEntity.status(HttpStatus.FORBIDDEN.value()).body(ex.getMessage());
+	public ResponseEntity<String> handleInvalidToken(InvalidTokenException ex) {
+		// TODO Figure out why this handler is not working
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
 	}
 
 	@ExceptionHandler(UnknownException.class)
-	public ResponseEntity<?> handleUnknown(NotFoundException ex) {
+	public ResponseEntity<String> handleUnknown(UnknownException ex) {
 		// TODO Figure out why this handler is not working
-		var cause = ex.getCause();
-		return ResponseEntity.internalServerError().body(cause != null ? cause : ex.toString());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
 	}
 }

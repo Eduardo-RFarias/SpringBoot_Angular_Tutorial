@@ -8,13 +8,14 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Service;
 
 import edu.unb.reddit.controller.SubRedditController;
-import edu.unb.reddit.dto.SubRedditDto;
+import edu.unb.reddit.dto.SubRedditResponse;
 
 @Service
-public class SubRedditAssembler implements RepresentationModelAssembler<SubRedditDto, EntityModel<SubRedditDto>> {
+public class SubRedditAssembler
+		implements RepresentationModelAssembler<SubRedditResponse, EntityModel<SubRedditResponse>> {
 
 	@Override
-	public EntityModel<SubRedditDto> toModel(SubRedditDto entity) {
+	public EntityModel<SubRedditResponse> toModel(SubRedditResponse entity) {
 		var selfLink = linkTo(methodOn(SubRedditController.class).retrieve(entity.getSubRedditId())).withSelfRel();
 		var listLink = linkTo(methodOn(SubRedditController.class).list()).withRel("subreddits");
 
